@@ -25,8 +25,7 @@ object FunctionalCounter:
           // Behaviors.stopped, Akka chiude quell'attore e non processa più altri
           // messaggi
 
-// @main def functionalApi: Unit =
-object Main extends App:
+@main def functionalApi: Unit =
   val system = ActorSystem[Command](
     /* Comportamento del guardian actor, specificato tramite un Behavior[Command].
     Definisce come il guardian actor reagisce ai messaggi inviati all'ActorSystem */

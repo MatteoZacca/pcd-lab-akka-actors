@@ -15,6 +15,7 @@ object MyActor:
 def inContextOf(actor: ActorRef)(block: ActorRef ?=> Unit): Unit = // using clause
   given ActorRef = actor
   block
+  
 @main def main(): Unit =
   val system = akka.actor.ActorSystem("factory") // factory for actors
   Thread.sleep(1000) // wait for the actors to respond

@@ -12,7 +12,7 @@ enum PingPong:
 import PingPong.*
 
 class PingPonger(context: ActorContext[PingPong], var bounces: Int = 10) extends AbstractBehavior(context):
-  context.log.info(s"Hello. My path is: ${context.self.path}")
+  context.log.info(s"Hello :) My path is: ${context.self.path}")
 
   override def onMessage(msg: PingPong): Behavior[PingPong] =
     bounces -= 1
