@@ -15,6 +15,7 @@ public class HelloActorJava {
         public Greet(String whom, ActorRef<Greeted> replyTo) {
             this.whom = whom;
             this.replyTo = replyTo;
+            log("Sono entrato nel costruttore di Greet");
         }
     }
 
@@ -25,21 +26,29 @@ public class HelloActorJava {
         public Greeted(String whom, ActorRef<Greet> from) {
             this.whom = whom;
             this.from = from;
+            log("Sono entrato nel costruttore di Greeted");
         }
     }
 
     // Actor behavior definition
     public static Behavior<Greet> create() {
-        return Behaviors.receive(Greet.class)
+        log("Sono appena entrato nel metodo create");
+        return Behaviors.receive(Greet.class) // specifica che questo attore è progettato
+                // per ricevere messaggi del tipo Greet
                 .onMessage(Greet.class, HelloActorJava::onGreet)
                 .build();
     }
 
     private static Behavior<Greet> onGreet(Greet message) {
+        log("Sono appena entrato nel metodo onGreet");
         return Behaviors.setup(context -> {
-            System.out.println("Hello " + message.whom + "!");
+            log("Hello " + message.whom + "!");
             message.replyTo.tell(new Greeted(message.whom, context.getSelf()));
             return Behaviors.same();
         });
+    }
+
+    private static void log (String msg) {
+        System.out.println("[" + Thread.currentThread().getName() + "]: " + msg);
     }
 }
