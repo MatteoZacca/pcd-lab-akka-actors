@@ -2,7 +2,7 @@ package it.unibo.pcd.akka.basics.e01hello
 
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, ActorSystem, Behavior, Terminated}
-import it.unibo.pcd.akka.basics.ChildActor
+import ChildActor.*
 
 object ChildActor:
   def apply(): Behavior[String] =

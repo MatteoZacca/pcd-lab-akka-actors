@@ -23,15 +23,17 @@ class PingPonger(context: ActorContext[PingPong], var bounces: Int = 10) extends
       msg match
         case Pong(replyTo) =>
           context.log.info("Pong")
+          println(s"bounces: $bounces ---> $replyTo ! ${Ping(context.self)}")
           replyTo ! Ping(context.self)
         case Ping(replyTo) =>
           context.log.info("Ping")
+          println(s"bounces: $bounces ---> $replyTo ! ${Pong(context.self)}")
           replyTo ! Pong(context.self)
       this
 
 object PingPongMainSimple extends App:
   val system = ActorSystem[PingPong](Behaviors.setup(new PingPonger(_)), "ping-pong")
-  system ! Ping(system)
+  system ! Ping(system) 
 
 /** Concepts:
   *   - actor hierarchy
@@ -41,13 +43,15 @@ object PingPongMain extends App:
   val system = ActorSystem(
     Behaviors.setup[PingPong]: ctx =>
       // Child actor creation
-      val pingponger = ctx.spawn(Behaviors.setup[PingPong](ctx => new PingPonger(ctx, 5)), "ping-ponger")
+      val pingPongerChild = ctx.spawn(Behaviors.setup[PingPong](ctx => new PingPonger(ctx, 5)), "ping-ponger-child")
       // Watching child
-      ctx.watch(pingponger)
+      ctx.watch(pingPongerChild)
       ctx.log.info(s"I am the root user guardian. My path is: ${ctx.self.path}")
       Behaviors
         .receiveMessage[PingPong] { msg =>
-          pingponger ! msg
+          println(s"Il ${ctx.self} ha ricevuto un messaggio: $msg")
+          println(s"$pingPongerChild ! $msg")
+          pingPongerChild ! msg
           Behaviors.same
         }
         .receiveSignal { case (ctx, t @ Terminated(_)) =>
@@ -55,8 +59,9 @@ object PingPongMain extends App:
           Behaviors.stopped // Or Behaviors.same to continue
         }
     ,
-    "ping-pong"
+    name = "ping-pong"
   )
   system.log.info(s"System root path: ${system.path.root}")
   system.log.info(s"Top-level user guardian path: ${system.path}")
+  println(s"$system ! ${Ping(system)}")
   system ! Ping(system)
